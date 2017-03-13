@@ -1,13 +1,10 @@
-library(devtools)
-install_github("ggbiplot", "vqv")
-library(ggbiplot)
 #Interesting Operations:
 #substr(string, first, last) -> can return a string or a vector of string depends on the type of input
 #gsub(",","",vector) -> can substitute char ',' to ''
 #as.Date("2017-3-12", format="%Y-%m-%d"), with Date datatype, weekdays(date_vector), months(date_vector), days(date_vector), quarters(date_vector) can be applied
 #other Date format: %y (year 2 digits), %b (Month abbrev.), %B (Month Full name), %m (Month decimal)
 
-#This function reads data from SPSS, XLS, CSV etc.
+#This function reads data from SPSS, XLS, CSV.
 readData <- function(filePath, fileType, header=TRUE){
   switch(fileType,
          spss = {
@@ -23,18 +20,45 @@ readData <- function(filePath, fileType, header=TRUE){
   return(data)
 }
 
-writeData <- function(filePath, fileType, header=TRUE){
+#This function writes data in CSV format.
+writeData <- function(data, filePath, fileType, header=TRUE){
   
+}
+
+splitData <- function(data, numberOfSplits){
+  rep.num <- nrow(data)/numberOfSplits
+  chunks <- split(data, sample(rep(1:numberOfSplits,rep.num)))
+  return(chunks)
+}
+
+#This function splits data and store into a bunch of different files
+splitFile <- function(data, fileName, numberOfSplits){
+  rep.num <- nrow(data)/numberOfSplits
+  chunks <- split(data, sample(rep(1:numberOfSplits,rep.num)))
+  currentDir <- getwd()
+  setwd(currentDir)
+  index <- 1
+  for(chunk in chunks){
+    writeData(chunk,paste(fileName,index,collapse = "-"), "csv")
+    index <- index + 1
+  }
 }
 
 #Under any circumstances, you cannot have more than (2^31)-1 = 2,147,483,647 rows or columns
 #This function takes big data and subset it into the first n rows
 #Input: first number of rows
 #Output: Subset of Data
-subsetWithRelease <- function(nrow = 100, bigdata){    
+subsetWithRelease <- function(nrow = 1000, bigdata){    
   subset <- bigdata[1:nrows, 1:ncol(bigdata)]
   rm(bigdata)
   return(subset)
+}
+
+subsetWithLevels <- function(data, col, colName){
+  for (name in col){
+    tmp <- subset(data, colName == name)
+    #Do something here
+  }
 }
 
 #This function takes a table and a columnName 
@@ -96,12 +120,14 @@ mergeDatabases <- function(data1, data2, col1, col2){
   return(data)
 }
 
-#This function takes subsetData, partitian based on list of column names
-#Input: Data table and partition col
+#This function takes subsetData, partitioned based on list of column names
+#Input: Data table and partition col (needs to be factors)
 #Output: Summary
 sumByConditions <- function(subset, listObjects){
   exposures <- aggregate(x = subset, by = listObjects, FUN = function(x){
-    sum(pmax(x,0))
+    #sum(pmax(x,0)), sum every value in x that is larger than 0
+    #pmax is parallel comparison
+    sum(x)
   })
   return(exposures)
 }
@@ -147,20 +173,29 @@ percentageChangeByOne <- function(data, column){
 
 #Below are reshape2 functions
 
-summarizeData <- function(data, idVariables, valueVariables){
+#This function takes wide-format data and converts it into long-format data
+meltData <- function(data, ids, varName = "variable", valName = "value"){
   library(reshape2)
-  id.string <- paste(idVariables, collapse = "+")
-  value.string <- paste(valueVariables, collapse = "+")
-  constrain.string <- paste(id.string, value.string, collapse = "~")
+  return(melt(data, id.vars = ids, variable.names = varName, value.name = valName))
+}
+
+#This function takes long-format data and converts it into wide-format data
+summarizeData <- function(data, ids, variable){
+  library(reshape2)
+  id.string <- paste(ids, collapse = "+")
+  constrain.string <- paste(id.string, variable, collapse = "~")
   data.summary <- dcast(data, constrain.string, fun.aggregate = mean, na.rm = TRUE)
   return(data.summary)
 }
 
+#Resample functions: Bootstrapping
+#Resample with timeseries
 
 #Principal Component Analysis
-
-
 example <- function(){
+  library(devtools)
+  install_github("ggbiplot", "vqv")
+  library(ggbiplot)
   data(iris)
   head(iris,10)
   log.ir <- log(iris[,1:4])
@@ -178,5 +213,8 @@ example <- function(){
   print(g)
 }
 
-example()
-
+#KNN Analysis:
+#https://www.analyticsvidhya.com/blog/2015/08/learning-concept-knn-algorithms-programming/
+knn <- function(){
+  
+}
