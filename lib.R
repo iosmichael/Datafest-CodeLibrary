@@ -9,6 +9,21 @@ library(ggbiplot)
 
 #This function reads data from SPSS, XLS, CSV etc.
 readData <- function(filePath, fileType, header=TRUE){
+  switch(fileType,
+         spss = {
+           library(foreign)
+           data <- read.spss(filePath)
+         },xlsx = {
+           library(xlsx)
+           data <- read.xlsx(filePath)
+         },csv = {
+           data <- read.csv(filePath, header = header)
+         },print("No specification")
+         )
+  return(data)
+}
+
+writeData <- function(filePath, fileType, header=TRUE){
   
 }
 
@@ -91,21 +106,57 @@ sumByConditions <- function(subset, listObjects){
   return(exposures)
 }
 
+#This function transpose data matrix
+#Input: Data table and parameters to include colnames or rownames
+#Output: Transposed matrix
 transposeData <- function(data, colHeader = FALSE, rowHeader = FALSE){
+  library(reshape2)
   if (colHeader) {
+    #column array is first row
+    col_array <- data[,1]
     if (rowHeader){
-      
+      #row array is first column
+      row_array <- data[1,]
+      data.mod <- t(data[-1,-1])
+      rownames(data.mod) <- row_array
     }else{
-      
+      data.mod <- t(data[,-1])
     }
+    colnames(data.mod) <- col_array
   }else{
     if (rowHeader){
-      
+      #row array is first column
+      row_array <- data[1,]
+      data.mod <- t(data[-1,])
+      rownames(data.mod) <- row_array
     }else{
-      
+      data.mod <- t(data)
     }
   }
 }
+
+#This function adds a percentage change column in the dataframe
+#Input: Data, Column
+#Output: Data.MOD
+percentageChangeByOne <- function(data, column){
+  x <- data[,column]
+  x.diff <- c(NA, diff(x)/x*100)
+  cbind(x.diff, data)
+  return(data)
+}
+
+#Below are reshape2 functions
+
+summarizeData <- function(data, idVariables, valueVariables){
+  library(reshape2)
+  id.string <- paste(idVariables, collapse = "+")
+  value.string <- paste(valueVariables, collapse = "+")
+  constrain.string <- paste(id.string, value.string, collapse = "~")
+  data.summary <- dcast(data, constrain.string, fun.aggregate = mean, na.rm = TRUE)
+  return(data.summary)
+}
+
+
 #Principal Component Analysis
 
 
