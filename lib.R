@@ -2,7 +2,7 @@
 #substr(string, first, last) -> can return a string or a vector of string depends on the type of input
 #gsub(",","",vector) -> can substitute char ',' to ''
 #as.Date("2017-3-12", format="%Y-%m-%d"), with Date datatype, weekdays(date_vector), months(date_vector), days(date_vector), quarters(date_vector) can be applied
-#other Date format: %y (year 2 digits), %b (Month abbrev.), %B (Month Full name), %m (Month decimal)
+#other Date format: %y (year 2 digits), %b (Month abbrev.) ex. JAN, %B (Month Full name), %m (Month decimal)
 
 #This function reads data from SPSS, XLS, CSV.
 readData <- function(filePath, fileType, header=TRUE){
@@ -18,16 +18,18 @@ readData <- function(filePath, fileType, header=TRUE){
          },print("No specification")
          )
   return(data)
-}
+} 
 
 #This function writes data in CSV format.
 writeData <- function(data, filePath, fileType, header=TRUE){
   
 }
 
+
+#This function takes a dataframe and splits it into number of chunks
 splitData <- function(data, numberOfSplits){
   rep.num <- nrow(data)/numberOfSplits
-  chunks <- split(data, sample(rep(1:numberOfSplits,rep.num)))
+  chunks <- split(data, sample(rep(1:numberOfSplits, rep.num)))
   return(chunks)
 }
 
@@ -46,14 +48,15 @@ splitFile <- function(data, fileName, numberOfSplits){
 
 #Under any circumstances, you cannot have more than (2^31)-1 = 2,147,483,647 rows or columns
 #This function takes big data and subset it into the first n rows
-#Input: first number of rows
-#Output: Subset of Data
+#Input: Data table
+#Output: Subset of Data with first nrow number of rows
 subsetWithRelease <- function(nrow = 1000, bigdata){    
   subset <- bigdata[1:nrows, 1:ncol(bigdata)]
   rm(bigdata)
   return(subset)
 }
 
+#This function takes big data and subset it based on column
 subsetWithLevels <- function(data, col, colName){
   for (name in col){
     tmp <- subset(data, colName == name)
@@ -65,7 +68,12 @@ subsetWithLevels <- function(data, col, colName){
 #get rid of Commas in the data table and change it into numeric value
 #Input: Data table, Target column name
 #Output: Data table
+#UNTESTED...
 getRidOfComma <- function(table, colName){
+  #apply second parameter: if it is 1, it goes through each row; if it is 2, it goes through each column
+  apply(table, 2, function(x){
+    x <- as.numeric(gsub(",","",x))
+  })
   #as.numeric(gsub(",","",colName))
   return(table)
 }
@@ -76,8 +84,9 @@ getRidOfComma <- function(table, colName){
 #Intrinsic Value: $percentage: percentage of Na Values within the column
 naReader <- function(table, colName){
   #naVec <- is.na(table[colName])
+  #naReader(...)$percentages
   percentages <- apply(table, 2, function(x){
-    return(length(is.na(x))/length(x))
+    return(length(is.na(x))/length(x))*100
     })
 }
 
@@ -180,7 +189,7 @@ meltData <- function(data, ids, varName = "variable", valName = "value"){
 }
 
 #This function takes long-format data and converts it into wide-format data
-summarizeData <- function(data, ids, variable){
+castData <- function(data, ids, variable){
   library(reshape2)
   id.string <- paste(ids, collapse = "+")
   constrain.string <- paste(id.string, variable, collapse = "~")
@@ -215,6 +224,10 @@ example <- function(){
 
 #KNN Analysis:
 #https://www.analyticsvidhya.com/blog/2015/08/learning-concept-knn-algorithms-programming/
-knn <- function(){
-  
+knnAnalysis <- function(train.data, test.data, labels, number){
+  library("class")
+  knn_predict <- knn(train = train.data, test = test.data, cl = labels, k = numbers)
+  return(knn_predict)
 }
+
+
