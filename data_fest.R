@@ -106,6 +106,15 @@ predictByModel <- function(modelFit, bigData){
 }
 
 # Logistic
+?t.test
+## Classical example: Student's sleep data
+plot(extra ~ group, data = sleep)
+## Traditional interface
+with(sleep, t.test(extra[group == 1], extra[group == 2]))
+## Formula interface
+t.test(extra ~ group, data = sleep)
+
+?chisq.test
 
 ## Prediction & Accuracy -> test
 ## Can retrieve local(in-function) variables by using $
