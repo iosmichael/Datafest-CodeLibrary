@@ -1,4 +1,4 @@
-setwd("~/Desktop/datafest")
+setwd("~/datafest")
 housing <- read.csv("landdata-states.csv")
 head(housing[1:5])
 library(ggplot2)
@@ -27,7 +27,7 @@ library(ggrepel)
 p1 + geom_point() + geom_text_repel(aes(label = State), size = 3)
 
 p1 + geom_point(aes(color = Home.Value, shape = region))
-
+?geom_text_repel
 #Excercise I
 dat <- read.csv("EconomistData.csv")
 head(dat)
@@ -79,6 +79,9 @@ eco <- read.csv("EconomistData.csv")
 head(eco)
 graph <- ggplot(eco, aes(x = CPI, y = HDI)) + labs(x = "Corruption Perceptions Index, 2011 (10 = least corrupt)",
                                                      y = "Human Development Index, 2011 (1 = best)",
-                                                     title = "Corruption and Human Development")
-graph <- graph + theme(legend.position = "top", axis.text = element_text(size = 12)) + geom_point(aes(color = Region), size = 10, alpha = 0.5)
-graph 
+                                                     title = "Corruption and Human Development",
+                                                   size = 5)
+graph + theme(legend.position = "top", axis.text = element_text(size = 9)) + geom_point(shape=1,aes(color = Region), size = 2) 
++ geom_smooth(color = "red", size = 1, method = "glm", formula = y ~ splines::bs(x, 3), se=FALSE)
+?geom_text
+graph

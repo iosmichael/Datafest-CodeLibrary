@@ -25,6 +25,9 @@ writeData <- function(data, filePath, fileType, header=TRUE){
   
 }
 
+# using subset function 
+#newdata <- subset(mydata, age >= 20 | age < 10, 
+#                  select=c(ID, Weight))
 
 #This function takes a dataframe and splits it into number of chunks
 splitData <- function(data, numberOfSplits){
@@ -44,6 +47,18 @@ splitFile <- function(data, fileName, numberOfSplits){
     writeData(chunk,paste(fileName,index,collapse = "-"), "csv")
     index <- index + 1
   }
+}
+
+sorting <- function(){
+  # sorting examples using the mtcars dataset
+  attach(mtcars)
+  # sort by mpg
+  newdata <- mtcars[order(mpg),] 
+  # sort by mpg and cyl
+  newdata <- mtcars[order(mpg, cyl),]
+  #sort by mpg (ascending) and cyl (descending)
+  newdata <- mtcars[order(mpg, -cyl),] 
+  detach(mtcars)
 }
 
 #Under any circumstances, you cannot have more than (2^31)-1 = 2,147,483,647 rows or columns
