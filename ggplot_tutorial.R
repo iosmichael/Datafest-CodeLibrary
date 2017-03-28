@@ -80,5 +80,4 @@ head(eco)
 graph <- ggplot(eco, aes(x = CPI, y = HDI)) + labs(x = "Corruption Perceptions Index, 2011 (10 = least corrupt)",
                                                      y = "Human Development Index, 2011 (1 = best)",
                                                      title = "Corruption and Human Development")
-graph <- graph + theme(legend.position = "top", axis.text = element_text(size = 12)) + geom_point(aes(color = Region), size = 10, alpha = 0.5)
-graph 
+graph + theme(legend.position = "top", axis.text = element_text(size = 12)) + geom_point(aes(color = Region), size = 10, alpha = 0.5)
