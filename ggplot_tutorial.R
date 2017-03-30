@@ -80,8 +80,49 @@ head(eco)
 graph <- ggplot(eco, aes(x = CPI, y = HDI)) + labs(x = "Corruption Perceptions Index, 2011 (10 = least corrupt)",
                                                      y = "Human Development Index, 2011 (1 = best)",
                                                     title = "Corruption and Human Development",
-                                                   size = 5)
-graph + theme(legend.position = "top", axis.text = element_text(size = 9)) + geom_point(shape=1,aes(color = Region), size = 2) 
-+ geom_smooth(color = "red", size = 1, method = "glm", formula = y ~ splines::bs(x, 3), se=FALSE)
+                                                   size = 5, family = "Helvetic Neue")
+p1 <- graph + theme(legend.position = "top", axis.text = element_text(size = 9)) + geom_point(pch=21, aes(color = Region), size = 2) + geom_smooth(color = "red", size = 1, method = "glm", formula = y ~ splines::bs(x, 3), se=FALSE)
+p1 + geom_text_repel(label = c(rep("",14),as.character(eco$Country[15:20]), rep("", 153))) + scale_color_manual(values = c("#E53935","#673AB7","#009688","#01579B","#1B5E20","#FF8F00"))
+
+?prcomp
+head(eco)
+
+autoplot(pam(eco[c(3,4,5)],6))
+a <- autoplot(prcomp(eco[c(3,4,5)]), data = eco, colour = 'Region',loadings = TRUE, loadings.colour = '#E53935', loadings.label = TRUE, loadings.label.size = 4)
+a + geom_text_repel(label = eco$Country)
+
 ?geom_text
 graph
+
+#http://rpubs.com/sinhrks/plot_pca
+#Visualization of PCA
+#install.packages("ggfortify")
+library(ggfortify)
+df <- iris[c(1, 2, 3, 4)]
+prcomp(df)
+autoplot(prcomp(df), data = iris, colour = 'Species') 
+autoplot(prcomp(df), data = iris, colour = 'Species', label = TRUE, label.size = 3)
+autoplot(prcomp(df), data = iris, colour = 'Species', loadings = TRUE, loadings.colour = 'pink', loadings.label = TRUE, loadings.label.size = 4)
+
+#Visualization of K-Means
+autoplot(kmeans(USArrests, 3), data = USArrests)
+autoplot(kmeans(USArrests, 3), data = USArrests, label = TRUE, label.size = 3)
+
+#Visualization of Factor Analysis
+d.factanal <- factanal(state.x77, factors = 4, scores = 'regression')
+?factanal
+autoplot(d.factanal, data = state.x77, colour = 'Income')
+autoplot(d.factanal, label = TRUE, label.size = 3,
+         loadings = TRUE, loadings.label = TRUE, loadings.label.size  = 3)
+
+#Visualization of Cluster Analysis
+library(cluster)
+?clara
+
+levels(iris$Species)
+# K-Means Cluster Analysis
+?autoplot
+autoplot(kmeans(iris[-5], 3), data = iris) 
+autoplot(clara(iris[-5], 3), loadings = TRUE, loadings.colour = 'pink', loadings.label = TRUE, loadings.label.size = 4)
+autoplot(fanny(iris[-5], 3), frame = TRUE, loadings = TRUE, loadings.colour = 'pink', loadings.label = TRUE, loadings.label.size = 4)
+autoplot(pam(iris[-5], 3), frame = TRUE, frame.type = 'norm', loadings = TRUE, loadings.colour = 'pink', loadings.label = TRUE, loadings.label.size = 4)
