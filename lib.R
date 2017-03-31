@@ -74,7 +74,7 @@ subsetWithRelease <- function(nrow = 1000, bigdata){
 #This function takes big data and subset it based on column
 subsetWithLevels <- function(data, col, colName){
   for (name in col){
-    tmp <- subset(data, colName == name)
+    tmp <- subset(data, colName == name))
     #Do something here
   }
 }

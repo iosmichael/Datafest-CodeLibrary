@@ -81,8 +81,12 @@ graph <- ggplot(eco, aes(x = CPI, y = HDI)) + labs(x = "Corruption Perceptions I
                                                      y = "Human Development Index, 2011 (1 = best)",
                                                     title = "Corruption and Human Development",
                                                    size = 5, family = "Helvetic Neue")
-p1 <- graph + theme(legend.position = "top", axis.text = element_text(size = 9)) + geom_point(pch=21, aes(color = Region), size = 2) + geom_smooth(color = "red", size = 1, method = "glm", formula = y ~ splines::bs(x, 3), se=FALSE)
-p1 + geom_text_repel(label = c(rep("",14),as.character(eco$Country[15:20]), rep("", 153))) + scale_color_manual(values = c("#E53935","#673AB7","#009688","#01579B","#1B5E20","#FF8F00"))
+p1 <- graph + theme(legend.position = "top", axis.text = element_text(size = 9)) 
++ geom_point(pch=21, aes(color = Region), size = 2) 
++ geom_smooth(color = "red", size = 1, method = "glm", formula = y ~ splines::bs(x, 3), se=FALSE)
+?bs
+p1 + geom_text_repel(label = c(rep("",14),as.character(eco$Country[15:20]), rep("", 153))) 
++ scale_color_manual(values = c("#E53935","#673AB7","#009688","#01579B","#1B5E20","#FF8F00"))
 
 ?prcomp
 head(eco)
@@ -99,6 +103,7 @@ graph
 #install.packages("ggfortify")
 library(ggfortify)
 df <- iris[c(1, 2, 3, 4)]
+head(iris)
 prcomp(df)
 autoplot(prcomp(df), data = iris, colour = 'Species') 
 autoplot(prcomp(df), data = iris, colour = 'Species', label = TRUE, label.size = 3)
